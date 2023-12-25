@@ -79,11 +79,14 @@ public class Character
         }
     }
 
-    public void PrintAllEquippedItems() {
+    public void PrintAllEquippedItems()
+    {
         Console.WriteLine($"Equipped items:");
-        foreach(Item item in EquippedItems) {
+        foreach (Item item in EquippedItems)
+        {
             Console.WriteLine($"    {item.Name}");
-            foreach((string statName, StatModifier modifier) in item.Stats) {
+            foreach ((string statName, StatModifier modifier) in item.Stats)
+            {
                 string output;
 
                 switch (modifier.Type)
@@ -99,7 +102,7 @@ public class Character
                     case StatModType.PercentMult:
                         output = modifier.Value > 0 ? $"{Math.Abs(modifier.Value * 100)}% more {statName}" : $"{Math.Abs(modifier.Value * 100)}% less {statName}";
                         break;
-                    
+
                     default:
                         output = "Unknown option";
                         break;
