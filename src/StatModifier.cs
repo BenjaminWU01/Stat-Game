@@ -21,3 +21,14 @@ public class StatModifier {
     public StatModifier(float value, StatModType type, int order) : this(value, type, order, null) { }
     public StatModifier(float value, StatModType type, object source) : this(value, type, (int)type, source) { }
 }
+
+public class ScalingStatModifier : StatModifier {
+
+    public readonly Stat ScalingStat;
+    public readonly float Threshold;
+
+    public ScalingStatModifier(float value, Stat scalingStat, float threshold, StatModType type, int order, object source) : base(value, type, order, source){
+        ScalingStat = scalingStat;
+        Threshold = threshold;
+    }
+}

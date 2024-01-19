@@ -3,44 +3,34 @@ using System;
 public class Character
 {
     public Stat Strength;
-    public Stat Agility;
+    public Stat Dexterity;
     public Stat Intelligence;
-    public Stat Health;
+    public Stat Life;
     public Stat Mana;
     public Stat Armor;
-    public Stat AttackPower;
-    public Stat SpellPower;
-    public Stat CritChance;
-    public Stat CritDamage;
-    public Stat Haste;
-    public Stat AttackSpeed;
     public Stat BlockChance;
     public Stat BlockAmount;
-    public Stat DodgeChance;
-    public Stat ParryChance;
-    public Stat MovementSpeed;
+    public Stat MeleePhysDmg;
+    public Stat MeleePhysDmgPercentAdd;
+    public Stat AccuracyRating;
+    public Stat EvasionRating;
 
     public List<Item> EquippedItems;
 
     public Character()
     {
-        Strength = new Stat(10);
-        Agility = new Stat(10);
-        Intelligence = new Stat(10);
-        Health = new Stat(100);
-        Mana = new Stat(100);
-        Armor = new Stat(0);
-        AttackPower = new Stat(0);
-        SpellPower = new Stat(0);
-        CritChance = new Stat(0);
-        CritDamage = new Stat(0);
-        Haste = new Stat(0);
-        AttackSpeed = new Stat(0);
+        Strength = new Stat(10f);
+        Dexterity = new Stat(10f);
+        Intelligence = new Stat(10f);
+        Life = new Stat(100f);
+        Mana = new Stat(100f);
+        Armor = new Stat(0f);
         BlockChance = new Stat(0);
         BlockAmount = new Stat(0);
-        DodgeChance = new Stat(0);
-        ParryChance = new Stat(0);
-        MovementSpeed = new Stat(0);
+        MeleePhysDmg = new Stat(0f);
+        MeleePhysDmgPercentAdd = new Stat(100f);
+        AccuracyRating = new Stat(0f);
+        EvasionRating = new Stat(0f);
 
         EquippedItems = new List<Item>();
     }
@@ -59,6 +49,7 @@ public class Character
                     stat.AddModifier(modifier);
                 }
             }
+            System.Console.WriteLine($"Your character equipped {item.Name}");
         }
     }
 
@@ -76,6 +67,7 @@ public class Character
                     stat.RemoveAllModifiersFromSource(item);
                 }
             }
+            System.Console.WriteLine($"Your character unequipped {item.Name}");
         }
     }
 
@@ -111,6 +103,25 @@ public class Character
                 System.Console.WriteLine($"        {output}");
             }
         }
+    }
+
+    public void PrintOffensiveStats() {
+        System.Console.WriteLine("Offensive Stats:");
+        System.Console.WriteLine($"    Melee Physical Damage: {MeleePhysDmg.Value}");
+        System.Console.WriteLine($"    Increased Melee Physical Damage: {MeleePhysDmgPercentAdd.Value}%");
+    }
+
+    public void PrintDefensiveStats() {
+        System.Console.WriteLine("Defensive Stats:");
+        System.Console.WriteLine($"    Life: {Life.Value}");
+        System.Console.WriteLine($"    Mana: {Mana.Value}");
+        System.Console.WriteLine($"    Armour: {Armor.Value}");
+        System.Console.WriteLine($"    Block Chance: {BlockChance.Value}%");
+        System.Console.WriteLine($"    Block Amount: {BlockAmount.Value}");
+    }
+
+    public void PrintMiscStats() {
+
     }
 
 }

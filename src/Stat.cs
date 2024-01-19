@@ -16,7 +16,6 @@ public class Stat
             {
                 lastBaseValue = BaseValue;
                 _value = CalculateFinalValue();
-                isDirty = false;
             }
             return _value;
         }
@@ -92,11 +91,25 @@ public class Stat
         {
             StatModifier mod = statModifiers[i];
 
-            if (mod.Type == StatModType.Flat)
+            if (mod.Type == StatModType.Flat && mod is ScalingStatModifier) 
+            {
+                finalValue += (float)Math.Floor(((ScalingStatModifier)mod).ScalingStat.Value / ((ScalingStatModifier)mod).Threshold) * ((ScalingStatModifier)mod).Value;
+            }
+            else if (mod.Type == StatModType.Flat && mod is not ScalingStatModifier)
             {
                 finalValue += mod.Value;
             }
-            else if (mod.Type == StatModType.PercentAdd)
+            else if (mod.Type == StatModType.PercentAdd && mod is ScalingStatModifier) 
+            {
+                sumPercentAdd += (float)Math.Floor(((ScalingStatModifier)mod).ScalingStat.Value / ((ScalingStatModifier)mod).Threshold) * ((ScalingStatModifier)mod).Value;
+
+                if (i + 1 >= statModifiers.Count || statModifiers[i + 1].Type != StatModType.PercentAdd)
+                {
+                    finalValue *= 1 + sumPercentAdd;
+                    sumPercentAdd = 0;
+                }
+            }
+            else if (mod.Type == StatModType.PercentAdd && mod is not ScalingStatModifier)
             {
                 sumPercentAdd += mod.Value;
 
@@ -106,9 +119,20 @@ public class Stat
                     sumPercentAdd = 0;
                 }
             }
-            else if (mod.Type == StatModType.PercentMult)
+            else if (mod.Type == StatModType.PercentMult && mod is ScalingStatModifier) 
+            {
+                finalValue *= 1 + (float)Math.Floor(((ScalingStatModifier)mod).ScalingStat.Value / ((ScalingStatModifier)mod).Threshold) * ((ScalingStatModifier)mod).Value;
+            }
+            else if (mod.Type == StatModType.PercentMult && mod is not ScalingStatModifier)
             {
                 finalValue *= 1 + mod.Value;
+            }
+
+            if (mod is ScalingStatModifier)
+            {
+                isDirty = true;
+            } else {
+                isDirty = false;
             }
         }
         return (float)Math.Floor(finalValue);
