@@ -5,16 +5,16 @@ using System.Collections.ObjectModel;
 public class Stat
 {
 
+    public int Id;
     public string Name;
-    public float BaseValue;
+    public string Text;
 
-    public virtual float Value
+    public virtual int Value
     {
         get
         {
-            if (isDirty || BaseValue != lastBaseValue)
+            if (isDirty)
             {
-                lastBaseValue = BaseValue;
                 _value = CalculateFinalValue();
             }
             return _value;
@@ -22,15 +22,17 @@ public class Stat
     }
 
     protected bool isDirty = true;
-    protected float _value;
-    protected float lastBaseValue = float.MinValue;
+    protected int _value;
     
     protected readonly List<StatModifier> statModifiers;
     public readonly ReadOnlyCollection<StatModifier> StatModifiers;
 
-    public Stat(float baseValue)
+    public Stat(int id, string name, string text)
     {
-        BaseValue = baseValue;
+        Id = id;
+        Name = name;
+        Text = text;
+    
         statModifiers = new List<StatModifier>();
         StatModifiers = statModifiers.AsReadOnly();
     }
@@ -82,51 +84,23 @@ public class Stat
         return 0;
     }
 
-    protected virtual float CalculateFinalValue()
+    protected virtual int CalculateFinalValue()
     {
-        float finalValue = BaseValue;
-        float sumPercentAdd = 0;
+        int finalValue = 0;
 
         for (int i = 0; i < statModifiers.Count; i++)
         {
             StatModifier mod = statModifiers[i];
 
-            if (mod.Type == StatModType.Flat && mod is ScalingStatModifier) 
+            if (mod is ScalingStatModifier) 
             {
-                finalValue += (float)Math.Floor(((ScalingStatModifier)mod).ScalingStat.Value / ((ScalingStatModifier)mod).Threshold) * ((ScalingStatModifier)mod).Value;
+                finalValue += ((ScalingStatModifier)mod).ScalingStat.Value / ((ScalingStatModifier)mod).Threshold * ((ScalingStatModifier)mod).Value;
             }
-            else if (mod.Type == StatModType.Flat && mod is not ScalingStatModifier)
+            else if (mod is not ScalingStatModifier)
             {
                 finalValue += mod.Value;
             }
-            else if (mod.Type == StatModType.PercentAdd && mod is ScalingStatModifier) 
-            {
-                sumPercentAdd += (float)Math.Floor(((ScalingStatModifier)mod).ScalingStat.Value / ((ScalingStatModifier)mod).Threshold) * ((ScalingStatModifier)mod).Value;
-
-                if (i + 1 >= statModifiers.Count || statModifiers[i + 1].Type != StatModType.PercentAdd)
-                {
-                    finalValue *= 1 + sumPercentAdd;
-                    sumPercentAdd = 0;
-                }
-            }
-            else if (mod.Type == StatModType.PercentAdd && mod is not ScalingStatModifier)
-            {
-                sumPercentAdd += mod.Value;
-
-                if (i + 1 >= statModifiers.Count || statModifiers[i + 1].Type != StatModType.PercentAdd)
-                {
-                    finalValue *= 1 + sumPercentAdd;
-                    sumPercentAdd = 0;
-                }
-            }
-            else if (mod.Type == StatModType.PercentMult && mod is ScalingStatModifier) 
-            {
-                finalValue *= 1 + (float)Math.Floor(((ScalingStatModifier)mod).ScalingStat.Value / ((ScalingStatModifier)mod).Threshold) * ((ScalingStatModifier)mod).Value;
-            }
-            else if (mod.Type == StatModType.PercentMult && mod is not ScalingStatModifier)
-            {
-                finalValue *= 1 + mod.Value;
-            }
+            
 
             if (mod is ScalingStatModifier)
             {
@@ -135,6 +109,6 @@ public class Stat
                 isDirty = false;
             }
         }
-        return (float)Math.Floor(finalValue);
+        return finalValue;
     }
 }

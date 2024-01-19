@@ -1,0 +1,26 @@
+<entries>
+    <!-- Mod -->
+    <entry id="1">
+        <positive>
+            <limit>
+                <!-- Range for picking the positive option, # is any int -->
+                <range min="1" max="#"/>
+            </limit>
+            <!-- Text if the roll is positive -->
+            <text>{0}% increased maximum Life</text>
+        </positive>
+        <negative>
+            <limit>
+                <!-- Range for picking the negative option, # is any int -->
+                <range min="#" max="-1"/>
+            </limit>
+            <!-- Text if the roll is negative -->
+            <text>{0}% reduced maximum Life</text>
+        </negative>
+        <stats>
+            <!-- Name of the character stat -->
+            <stat>maximum_life_+%</stat>
+        </stats>
+    </entry>
+    
+</entries>
